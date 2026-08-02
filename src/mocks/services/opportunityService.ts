@@ -1,7 +1,62 @@
 import { mockOpportunities } from '@/mocks/data/opportunities';
+import { useOperationsStore } from '@/stores/operationsStore';
+import type { OrganizationProfile, PartnerPost } from '@/shared/types/operations';
 import type { Opportunity, OpportunityFilters } from '@/shared/types/opportunity';
 
 const delay = (ms = 420) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+
+function partnerPostToOpportunity(
+  post: PartnerPost,
+  organization: OrganizationProfile,
+): Opportunity {
+  return {
+    id: post.id,
+    slug: post.id,
+    title: post.title,
+    summary: post.summary,
+    description: post.description,
+    category: post.category,
+    organization: {
+      id: 'partner-org',
+      name: organization.name,
+      isVerified: organization.verified,
+    },
+    coverImage: mockOpportunities.find((item) => item.category === post.category)?.coverImage,
+    fields: [],
+    skills: [],
+    tags: [],
+    targetAudience: ['Sinh viên đại học'],
+    requirements: [],
+    benefits: [],
+    applicationMethod: 'Liên hệ đơn vị tổ chức để hoàn thành hồ sơ đăng ký.',
+    applicationUrl: organization.website,
+    sourceUrl: organization.website,
+    contactEmail: organization.email,
+    contactPhone: organization.phone,
+    participationMode: post.mode,
+    location: post.location,
+    publishedAt: post.updatedAt,
+    applicationDeadline: post.deadline,
+    status: post.status,
+    isFeatured: false,
+    isPublic: true,
+    viewCount: post.views,
+    saveCount: post.saves,
+    createdAt: post.updatedAt,
+    updatedAt: post.updatedAt,
+  };
+}
+
+// Approved (`OPEN`) partner posts live in a separate store from the seeded
+// mock catalog; merge them in here so moderation approvals actually reach
+// the student-facing feed instead of only updating the partner's own record.
+function getOpportunityPool(): Opportunity[] {
+  const { posts, organization } = useOperationsStore.getState();
+  const publishedPartnerPosts = posts
+    .filter((post) => post.status === 'OPEN')
+    .map((post) => partnerPostToOpportunity(post, organization));
+  return [...mockOpportunities, ...publishedPartnerPosts];
+}
 
 function isOpenAndPublic(opportunity: Opportunity): boolean {
   return (
@@ -27,7 +82,7 @@ export async function getPublicOpportunities(
     ? Date.now() + filters.deadlineDays * 24 * 60 * 60 * 1000
     : null;
 
-  const results = mockOpportunities.filter((item) => {
+  const results = getOpportunityPool().filter((item) => {
     if (!isOpenAndPublic(item)) return false;
     const searchable = [
       item.title,
@@ -66,7 +121,7 @@ export async function getPublicOpportunities(
 
 export async function getOpportunityById(id: string): Promise<Opportunity | null> {
   await delay(300);
-  return mockOpportunities.find((item) => item.id === id && item.isPublic) ?? null;
+  return getOpportunityPool().find((item) => item.id === id && item.isPublic) ?? null;
 }
 
 export async function getFeaturedOpportunities(): Promise<Opportunity[]> {
