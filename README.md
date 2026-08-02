@@ -138,3 +138,10 @@ Không dùng Visual Studio solution và không có file `.sln`.
 - `docs/screen-inventory.md`
 - `docs/design-system.md`
 - `docs/BRD_PRD_Bang_tin_Co_hoi_Sinh_vien_REWRITE.docx` (bản sao chỉ đọc)
+
+## Tài liệu Harness / AI coding agent
+
+- `CLAUDE.md` — hướng dẫn cho Claude Code khi làm việc trong repo này (lệnh thường dùng, kiến trúc).
+- `AGENTS.md` — chuẩn agents.md dùng chung cho mọi coding agent (Claude Code, Codex, Cursor, ...).
+- `DESIGN.md` — thiết kế hệ thống: kiến trúc mock-first, mô hình dữ liệu, phân quyền, design system, giới hạn hiện tại và lộ trình lên backend thật.
+- `.claude/` — cấu hình harness cục bộ (launch config cho dev server preview, permission settings).
