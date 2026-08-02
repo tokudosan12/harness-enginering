@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { OpportunityApplication } from '@/shared/types/opportunity';
 import type { AppNotification, StudentProfile } from '@/shared/types/user';
 
 interface NotificationSettings {
@@ -15,10 +16,12 @@ interface StudentState {
   savedOpportunityIds: string[];
   reminderOpportunityIds: string[];
   notifications: AppNotification[];
+  applications: OpportunityApplication[];
   profile: StudentProfile;
   settings: NotificationSettings;
   toggleSaved: (id: string) => void;
   toggleReminder: (id: string) => void;
+  submitApplication: (application: OpportunityApplication) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   deleteNotification: (id: string) => void;
@@ -77,6 +80,7 @@ export const useStudentStore = create<StudentState>()(
       savedOpportunityIds: ['opp-01', 'opp-13', 'opp-17'],
       reminderOpportunityIds: ['opp-01', 'opp-17'],
       notifications: initialNotifications,
+      applications: [],
       profile: defaultProfile,
       settings: {
         inApp: true,
@@ -113,6 +117,13 @@ export const useStudentStore = create<StudentState>()(
         })),
       deleteNotification: (id) =>
         set((state) => ({ notifications: state.notifications.filter((item) => item.id !== id) })),
+      submitApplication: (application) =>
+        set((state) => ({
+          applications: [
+            application,
+            ...state.applications.filter((item) => item.opportunityId !== application.opportunityId),
+          ],
+        })),
       updateProfile: (profile) => set({ profile }),
       updateSettings: (settings) => set({ settings }),
     }),

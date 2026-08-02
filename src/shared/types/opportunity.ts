@@ -61,6 +61,19 @@ export interface Opportunity {
   updatedAt: string;
 }
 
+export interface OpportunityApplication {
+  id: string;
+  opportunityId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  university: string;
+  major: string;
+  cvFileName: string;
+  cvFileSize: number;
+  submittedAt: string;
+}
+
 export type OpportunitySort = 'newest' | 'deadline' | 'relevance';
 
 export interface OpportunityFilters {

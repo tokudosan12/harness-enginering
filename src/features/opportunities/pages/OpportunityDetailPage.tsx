@@ -3,17 +3,17 @@ import {
   ArrowLeft,
   CalendarDays,
   Check,
-  ExternalLink,
+  CheckCircle2,
   Flag,
   MapPin,
   Radio,
   Share2,
   ShieldCheck,
-  X,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { ApplyOpportunityDialog } from '@/components/common/ApplyOpportunityDialog';
 import {
   DeadlineBadge,
   OpportunityBadge,
@@ -24,11 +24,18 @@ import { Button } from '@/components/ui/Button';
 import { formatDate, getDaysRemaining } from '@/lib/date';
 import { getOpportunityById } from '@/mocks/services/opportunityService';
 import { MODE_LABELS } from '@/shared/constants/opportunities';
+import { useAuthStore } from '@/stores/authStore';
+import { useStudentStore } from '@/stores/studentStore';
 
 export function OpportunityDetailPage() {
   const { opportunityId = '' } = useParams();
-  const [showExternalDialog, setShowExternalDialog] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [showApplyDialog, setShowApplyDialog] = useState(false);
   const [shared, setShared] = useState(false);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const applications = useStudentStore((state) => state.applications);
   const query = useQuery({
     queryKey: ['opportunity', opportunityId],
     queryFn: () => getOpportunityById(opportunityId),
@@ -64,6 +71,7 @@ export function OpportunityDetailPage() {
   const opportunity = query.data;
   const canApply =
     opportunity.status === 'OPEN' && getDaysRemaining(opportunity.applicationDeadline) >= 0;
+  const isApplied = applications.some((item) => item.opportunityId === opportunity.id);
   const share = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -72,6 +80,13 @@ export function OpportunityDetailPage() {
     } catch {
       setShared(false);
     }
+  };
+  const handleApplyClick = () => {
+    if (!isAuthenticated || user?.role !== 'STUDENT') {
+      navigate(`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`);
+      return;
+    }
+    setShowApplyDialog(true);
   };
 
   return (
@@ -183,13 +198,15 @@ export function OpportunityDetailPage() {
               Cơ hội đã hết hạn hoặc đóng đăng ký.
             </div>
           ) : null}
-          <Button
-            className="mt-6 w-full"
-            disabled={!canApply}
-            onClick={() => setShowExternalDialog(true)}
-          >
-            Đăng ký tại nguồn chính thức <ExternalLink size={16} />
-          </Button>
+          {isApplied ? (
+            <div className="applied-status mt-6">
+              <CheckCircle2 size={18} /> Đã đăng ký
+            </div>
+          ) : (
+            <Button className="mt-6 w-full" disabled={!canApply} onClick={handleApplyClick}>
+              Đăng ký ngay
+            </Button>
+          )}
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div className="border-line-200 flex min-h-11 items-center justify-center rounded-[11px] border">
               <SaveOpportunityButton id={opportunity.id} />
@@ -216,51 +233,11 @@ export function OpportunityDetailPage() {
           </dl>
         </aside>
       </div>
-      {showExternalDialog ? (
-        <div
-          className="dialog-wrap"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="external-title"
-        >
-          <button
-            aria-label="Đóng hộp thoại"
-            className="dialog-backdrop"
-            onClick={() => setShowExternalDialog(false)}
-          />
-          <div className="dialog-card">
-            <div className="flex items-start justify-between gap-4">
-              <span className="bg-primary-50 text-primary-500 grid size-11 place-items-center rounded-xl">
-                <ExternalLink />
-              </span>
-              <button
-                aria-label="Đóng"
-                className="save-button"
-                onClick={() => setShowExternalDialog(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <h2 id="external-title">Bạn sắp rời Student Opportunity Hub</h2>
-            <p>
-              Trang đăng ký thuộc {opportunity.organization.name}. Hãy kiểm tra tên miền và không
-              chia sẻ thông tin nhạy cảm ngoài yêu cầu chính thức.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-end gap-2">
-              <Button onClick={() => setShowExternalDialog(false)} variant="secondary">
-                Ở lại
-              </Button>
-              <a
-                className="btn btn-primary"
-                href={opportunity.applicationUrl}
-                rel="noreferrer"
-                target="_blank"
-              >
-                Tiếp tục đăng ký <ExternalLink size={16} />
-              </a>
-            </div>
-          </div>
-        </div>
+      {showApplyDialog ? (
+        <ApplyOpportunityDialog
+          onClose={() => setShowApplyDialog(false)}
+          opportunity={opportunity}
+        />
       ) : null}
     </div>
   );

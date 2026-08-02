@@ -196,6 +196,53 @@
   color: #6b7894;
   line-height: 1.65;
 }
+.dialog-card-form {
+  width: min(92vw, 620px);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.dialog-card-form h2 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+}
+.dialog-subtitle {
+  margin: 0;
+  color: #6b7894;
+  font-size: 0.85rem;
+}
+.apply-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+.file-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9px;
+  background: #f4f8ff;
+  padding: 8px 11px;
+  color: #0b5cff;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+.apply-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.applied-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  background: #e6f8ef;
+  padding: 13px;
+  color: #118a5b;
+  font-weight: 750;
+}
 @media (max-width: 900px) {
   .detail-hero {
     grid-template-columns: 1fr;
