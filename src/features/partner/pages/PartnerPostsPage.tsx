@@ -1,6 +1,7 @@
-import { Edit3, Eye, Plus, Search, Send, XCircle } from 'lucide-react';
+import { Edit3, Eye, Plus, Search, Send, Users, XCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ApplicationsListDialog } from '@/components/common/ApplicationsListDialog';
 import { Button } from '@/components/ui/Button';
 import {
   EmptyTableState,
@@ -8,8 +9,10 @@ import {
   WorkspacePageHeading,
 } from '@/components/workspace/WorkspaceUI';
 import { CATEGORY_LABELS } from '@/shared/constants/opportunities';
+import type { PartnerPost } from '@/shared/types/operations';
 import type { OpportunityStatus } from '@/shared/types/opportunity';
 import { useOperationsStore } from '@/stores/operationsStore';
+import { useStudentStore } from '@/stores/studentStore';
 
 const postFilters: Array<{ label: string; value: 'ALL' | OpportunityStatus }> = [
   { label: 'Tất cả', value: 'ALL' },
@@ -23,8 +26,17 @@ const postFilters: Array<{ label: string; value: 'ALL' | OpportunityStatus }> = 
 export function PartnerPostsPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'ALL' | OpportunityStatus>('ALL');
+  const [applicationsPost, setApplicationsPost] = useState<PartnerPost | null>(null);
   const posts = useOperationsStore((state) => state.posts);
   const changePostStatus = useOperationsStore((state) => state.changePostStatus);
+  const applications = useStudentStore((state) => state.applications);
+  const applicationCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const item of applications) {
+      counts.set(item.opportunityId, (counts.get(item.opportunityId) ?? 0) + 1);
+    }
+    return counts;
+  }, [applications]);
   const filtered = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase('vi');
     return posts.filter(
@@ -102,11 +114,19 @@ export function PartnerPostsPage() {
                     </td>
                     <td>
                       <span className="workspace-kpi-inline">
-                        <Eye size={15} /> {post.views} · {post.applications} đăng ký
+                        <Eye size={15} /> {post.views} · {applicationCounts.get(post.id) ?? 0} đăng
+                        ký
                       </span>
                     </td>
                     <td>
                       <div className="workspace-row-actions">
+                        <Button
+                          aria-label={`Xem đơn đăng ký ${post.title}`}
+                          onClick={() => setApplicationsPost(post)}
+                          variant="ghost"
+                        >
+                          <Users size={16} /> {applicationCounts.get(post.id) ?? 0}
+                        </Button>
                         <Link
                           aria-label={`Sửa ${post.title}`}
                           className="workspace-icon-action"
@@ -148,6 +168,12 @@ export function PartnerPostsPage() {
           />
         )}
       </section>
+      {applicationsPost ? (
+        <ApplicationsListDialog
+          onClose={() => setApplicationsPost(null)}
+          post={applicationsPost}
+        />
+      ) : null}
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { OpportunityApplication } from '@/shared/types/opportunity';
+import type { ApplicationStatus, OpportunityApplication } from '@/shared/types/opportunity';
 import type { AppNotification, StudentProfile } from '@/shared/types/user';
 
 interface NotificationSettings {
@@ -22,6 +22,7 @@ interface StudentState {
   toggleSaved: (id: string) => void;
   toggleReminder: (id: string) => void;
   submitApplication: (application: OpportunityApplication) => void;
+  updateApplicationStatus: (ids: string[], status: ApplicationStatus) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   deleteNotification: (id: string) => void;
@@ -74,13 +75,42 @@ const initialNotifications: AppNotification[] = [
   },
 ];
 
+const initialApplications: OpportunityApplication[] = [
+  {
+    id: 'app-seed-1',
+    opportunityId: 'partner-post-1',
+    fullName: 'Ngọc Lan',
+    email: 'lan.ngoc@example.com',
+    phone: '0912345678',
+    university: 'Đại học Kinh tế TP.HCM',
+    major: 'Thiết kế sản phẩm',
+    cvFileName: 'CV_NgocLan_ProductDesign.pdf',
+    cvFileSize: 482_000,
+    submittedAt: '2026-08-01T09:15:00.000Z',
+    status: 'PENDING',
+  },
+  {
+    id: 'app-seed-2',
+    opportunityId: 'partner-post-1',
+    fullName: 'Minh Anh',
+    email: 'student@example.com',
+    phone: '0901234567',
+    university: 'Đại học Bách khoa Hà Nội',
+    major: 'Công nghệ thông tin',
+    cvFileName: 'CV_MinhAnh_UIUX.docx',
+    cvFileSize: 310_500,
+    submittedAt: '2026-07-31T14:40:00.000Z',
+    status: 'SHORTLISTED',
+  },
+];
+
 export const useStudentStore = create<StudentState>()(
   persist(
     (set) => ({
       savedOpportunityIds: ['opp-01', 'opp-13', 'opp-17'],
       reminderOpportunityIds: ['opp-01', 'opp-17'],
       notifications: initialNotifications,
-      applications: [],
+      applications: initialApplications,
       profile: defaultProfile,
       settings: {
         inApp: true,
@@ -123,6 +153,12 @@ export const useStudentStore = create<StudentState>()(
             application,
             ...state.applications.filter((item) => item.opportunityId !== application.opportunityId),
           ],
+        })),
+      updateApplicationStatus: (ids, status) =>
+        set((state) => ({
+          applications: state.applications.map((item) =>
+            ids.includes(item.id) ? { ...item, status } : item,
+          ),
         })),
       updateProfile: (profile) => set({ profile }),
       updateSettings: (settings) => set({ settings }),

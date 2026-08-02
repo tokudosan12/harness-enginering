@@ -210,6 +210,21 @@
   color: #6b7894;
   font-size: 0.85rem;
 }
+.dialog-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #566683;
+  font-size: 0.85rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+.dialog-back-link:hover {
+  color: #0b5cff;
+}
 .apply-form {
   display: grid;
   gap: 18px;

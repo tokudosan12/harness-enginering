@@ -4,17 +4,13 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
+import { formatFileSize } from '@/lib/format';
 import { submitOpportunityApplication } from '@/mocks/services/applicationService';
 import type { Opportunity } from '@/shared/types/opportunity';
 import { useStudentStore } from '@/stores/studentStore';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_EXTENSIONS = ['.pdf', '.docx'];
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 const applicationSchema = z.object({
   fullName: z.string().trim().min(2, 'Vui lòng nhập họ và tên.'),

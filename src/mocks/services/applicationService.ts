@@ -27,5 +27,6 @@ export async function submitOpportunityApplication(
     cvFileName: input.cvFile.name,
     cvFileSize: input.cvFile.size,
     submittedAt: new Date().toISOString(),
+    status: 'PENDING',
   };
 }

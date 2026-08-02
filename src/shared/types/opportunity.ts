@@ -61,6 +61,8 @@ export interface Opportunity {
   updatedAt: string;
 }
 
+export type ApplicationStatus = 'PENDING' | 'SHORTLISTED' | 'REJECTED';
+
 export interface OpportunityApplication {
   id: string;
   opportunityId: string;
@@ -72,6 +74,7 @@ export interface OpportunityApplication {
   cvFileName: string;
   cvFileSize: number;
   submittedAt: string;
+  status: ApplicationStatus;
 }
 
 export type OpportunitySort = 'newest' | 'deadline' | 'relevance';
