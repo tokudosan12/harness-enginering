@@ -8,4 +8,12 @@ export const routeConfig = {
   studentNotifications: '/student/notifications',
   studentProfile: '/student/profile',
   studentSettings: '/student/settings',
+  partnerDashboard: '/partner/dashboard',
+  partnerPosts: '/partner/posts',
+  moderatorQueue: '/moderator/review-queue',
+  moderatorReports: '/moderator/reports',
+  adminDashboard: '/admin/dashboard',
+  adminUsers: '/admin/users',
+  adminCategories: '/admin/categories',
+  adminAudit: '/admin/audit',
 } as const;

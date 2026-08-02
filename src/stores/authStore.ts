@@ -9,7 +9,7 @@ interface MockAccount {
   role: UserRole;
 }
 
-const accounts: MockAccount[] = [
+export const MOCK_ACCOUNTS: MockAccount[] = [
   { email: 'student@example.com', password: 'Student@123', name: 'Minh Anh', role: 'STUDENT' },
   { email: 'partner@example.com', password: 'Partner@123', name: 'Đối tác Demo', role: 'PARTNER' },
   {
@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       login: async (email, password) => {
         await new Promise<void>((resolve) => window.setTimeout(resolve, 650));
-        const account = accounts.find(
+        const account = MOCK_ACCOUNTS.find(
           (item) => item.email.toLowerCase() === email.toLowerCase() && item.password === password,
         );
         if (!account) throw new Error('Email hoặc mật khẩu chưa đúng. Vui lòng kiểm tra lại.');

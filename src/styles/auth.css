@@ -112,6 +112,67 @@
   color: #566683;
   font-size: 0.78rem;
 }
+.mock-account-panel {
+  display: grid;
+  gap: 13px;
+  border: 1px solid #dce5f2;
+  border-radius: 14px;
+  background: #f7faff;
+  padding: 15px;
+}
+.mock-account-panel > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+.mock-account-panel > div:first-child strong {
+  font-size: 0.82rem;
+}
+.mock-account-panel > div:first-child span {
+  color: #6b7894;
+  font-size: 0.72rem;
+}
+.mock-account-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.mock-account-grid button {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1px solid #dce5f2;
+  border-radius: 10px;
+  background: #fff;
+  color: #344563;
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+.mock-account-grid button:hover {
+  border-color: #8fb5ff;
+  background: #f8fbff;
+}
+.mock-account-grid button > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.mock-account-grid strong {
+  color: #071b44;
+  font-size: 0.72rem;
+}
+.mock-account-grid small {
+  overflow: hidden;
+  color: #6b7894;
+  font-size: 0.61rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 540px) {
+  .mock-account-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

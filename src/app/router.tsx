@@ -2,8 +2,8 @@ import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute, RoleGuard } from '@/components/common/RouteGuards';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { StudentLayout } from '@/components/layout/StudentLayout';
-import { ForbiddenPage, FuturePhasePage, NotFoundPage } from '@/app/SystemPages';
-import type { UserRole } from '@/shared/types/user';
+import { WorkspaceLayout } from '@/components/layout/WorkspaceLayout';
+import { ForbiddenPage, NotFoundPage } from '@/app/SystemPages';
 
 const studentShell = (
   <ProtectedRoute>
@@ -12,10 +12,24 @@ const studentShell = (
     </RoleGuard>
   </ProtectedRoute>
 );
-const futureRolePage = (area: 'Đối tác' | 'Kiểm duyệt' | 'Quản trị', role: UserRole) => (
+const partnerShell = (
   <ProtectedRoute>
-    <RoleGuard roles={[role]}>
-      <FuturePhasePage area={area} />
+    <RoleGuard roles={['PARTNER']}>
+      <WorkspaceLayout role="PARTNER" />
+    </RoleGuard>
+  </ProtectedRoute>
+);
+const moderatorShell = (
+  <ProtectedRoute>
+    <RoleGuard roles={['MODERATOR']}>
+      <WorkspaceLayout role="MODERATOR" />
+    </RoleGuard>
+  </ProtectedRoute>
+);
+const adminShell = (
+  <ProtectedRoute>
+    <RoleGuard roles={['ADMINISTRATOR']}>
+      <WorkspaceLayout role="ADMINISTRATOR" />
     </RoleGuard>
   </ProtectedRoute>
 );
@@ -134,12 +148,145 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  { path: '/partner', element: futureRolePage('Đối tác', 'PARTNER') },
-  { path: '/partner/*', element: futureRolePage('Đối tác', 'PARTNER') },
-  { path: '/moderator', element: futureRolePage('Kiểm duyệt', 'MODERATOR') },
-  { path: '/moderator/*', element: futureRolePage('Kiểm duyệt', 'MODERATOR') },
-  { path: '/admin', element: futureRolePage('Quản trị', 'ADMINISTRATOR') },
-  { path: '/admin/*', element: futureRolePage('Quản trị', 'ADMINISTRATOR') },
+  {
+    path: '/partner',
+    element: partnerShell,
+    children: [
+      { index: true, element: <Navigate replace to="dashboard" /> },
+      {
+        path: 'dashboard',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/partner/pages/PartnerDashboardPage'))
+            .PartnerDashboardPage,
+        }),
+      },
+      {
+        path: 'posts',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/partner/pages/PartnerPostsPage')).PartnerPostsPage,
+        }),
+      },
+      {
+        path: 'posts/new',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/partner/pages/PartnerPostEditorPage'))
+            .PartnerPostEditorPage,
+        }),
+      },
+      {
+        path: 'posts/:postId/edit',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/partner/pages/PartnerPostEditorPage'))
+            .PartnerPostEditorPage,
+        }),
+      },
+      {
+        path: 'organization',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/partner/pages/OrganizationPage')).OrganizationPage,
+        }),
+      },
+    ],
+  },
+  {
+    path: '/moderator',
+    element: moderatorShell,
+    children: [
+      { index: true, element: <Navigate replace to="review-queue" /> },
+      {
+        path: 'review-queue',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/moderation/pages/ModerationQueuePage'))
+            .ModerationQueuePage,
+        }),
+      },
+      {
+        path: 'review/:postId',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/moderation/pages/ModerationReviewPage'))
+            .ModerationReviewPage,
+        }),
+      },
+      {
+        path: 'reports',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/moderation/pages/ModerationReportsPage'))
+            .ModerationReportsPage,
+        }),
+      },
+      {
+        path: 'history',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/moderation/pages/ModerationHistoryPage'))
+            .ModerationHistoryPage,
+        }),
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    element: adminShell,
+    children: [
+      { index: true, element: <Navigate replace to="dashboard" /> },
+      {
+        path: 'dashboard',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/administration/pages/AdminDashboardPage'))
+            .AdminDashboardPage,
+        }),
+      },
+      {
+        path: 'users',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/administration/pages/AdminUsersPage'))
+            .AdminUsersPage,
+        }),
+      },
+      {
+        path: 'categories',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/administration/pages/AdminCategoriesPage'))
+            .AdminCategoriesPage,
+        }),
+      },
+      {
+        path: 'audit',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/administration/pages/AdminAuditPage'))
+            .AdminAuditPage,
+        }),
+      },
+      {
+        path: 'reports',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/administration/pages/AdminReportsPage'))
+            .AdminReportsPage,
+        }),
+      },
+      {
+        path: 'settings',
+        hydrateFallbackElement: routeFallback,
+        lazy: async () => ({
+          Component: (await import('@/features/administration/pages/AdminSettingsPage'))
+            .AdminSettingsPage,
+        }),
+      },
+    ],
+  },
   { path: '/403', element: <ForbiddenPage /> },
   { path: '/404', element: <NotFoundPage /> },
   { path: '*', element: <NotFoundPage /> },

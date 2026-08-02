@@ -1,12 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { Building2, Eye, EyeOff, ShieldCheck, UserRound, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import { AuthShell, FormField } from '@/features/authentication/components/AuthShell';
-import { roleHome, useAuthStore } from '@/stores/authStore';
+import { MOCK_ACCOUNTS, roleHome, useAuthStore } from '@/stores/authStore';
+
+const roleMeta = {
+  STUDENT: { label: 'Sinh viên', icon: UserRound },
+  PARTNER: { label: 'Đối tác', icon: Building2 },
+  MODERATOR: { label: 'Kiểm duyệt', icon: ShieldCheck },
+  ADMINISTRATOR: { label: 'Quản trị', icon: Wrench },
+} as const;
 
 const loginSchema = z.object({
   email: z.email('Email chưa đúng định dạng.'),
@@ -24,6 +31,7 @@ export function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -102,9 +110,35 @@ export function LoginPage() {
           </Link>
         </p>
       </form>
-      <div className="mock-account-note">
-        <strong>Tài khoản Student demo</strong>
-        <span>student@example.com / Student@123</span>
+      <div className="mock-account-panel">
+        <div>
+          <strong>Tài khoản demo để test</strong>
+          <span>Chọn một vai trò để tự điền email và mật khẩu.</span>
+        </div>
+        <div className="mock-account-grid">
+          {MOCK_ACCOUNTS.map((account) => {
+            const meta = roleMeta[account.role];
+            const Icon = meta.icon;
+            return (
+              <button
+                key={account.role}
+                onClick={() => {
+                  setValue('email', account.email, { shouldValidate: true });
+                  setValue('password', account.password, { shouldValidate: true });
+                  setSubmitError('');
+                }}
+                type="button"
+              >
+                <Icon size={18} />
+                <span>
+                  <strong>{meta.label}</strong>
+                  <small>{account.email}</small>
+                  <small>{account.password}</small>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </AuthShell>
   );

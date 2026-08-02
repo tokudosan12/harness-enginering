@@ -11,7 +11,7 @@ Giúp sinh viên tìm, lọc, hiểu, lưu và theo dõi cơ hội đáng tin c�
 - Bảng tin công khai, tìm kiếm/filter/sort theo URL, chi tiết và cảnh báo liên kết ngoài.
 - Đăng ký, đăng nhập theo role, quên mật khẩu và xác minh email dạng mock.
 - Student dashboard, saved opportunities, reminder, notifications, profile và settings.
-- Placeholder có guard cho Partner, Moderator và Admin.
+- Workspace hoàn chỉnh cho Partner, Moderator và Admin với RBAC frontend.
 - Không có backend, database, thanh toán hoặc nộp CV nội bộ.
 
 ## Công nghệ
@@ -66,7 +66,11 @@ Public: `/`, `/opportunities`, `/opportunities/:opportunityId`, `/about`, `/logi
 
 Student: `/student`, `/student/dashboard`, `/student/saved-opportunities`, `/student/notifications`, `/student/profile`, `/student/settings`.
 
-Future: `/partner/*`, `/moderator/*`, `/admin/*`.
+Partner: `/partner/dashboard`, `/partner/posts`, `/partner/posts/new`, `/partner/posts/:postId/edit`, `/partner/organization`.
+
+Moderator: `/moderator/review-queue`, `/moderator/review/:postId`, `/moderator/reports`, `/moderator/history`.
+
+Admin: `/admin/dashboard`, `/admin/users`, `/admin/categories`, `/admin/audit`, `/admin/reports`, `/admin/settings`.
 
 System: `/403`, `/404`, `/*`.
 
@@ -85,19 +89,24 @@ File `src/mocks/data/opportunities.ts` có 28 bản ghi, đúng 4 bản ghi cho 
 
 ## Chức năng đã hoàn thành
 
-- UI-01 đến UI-04 cho Guest và Student.
+- UI-01 đến UI-05 cho Guest, Student, Partner, Moderator và Administrator.
 - Search/filter/sort hoạt động, query state nằm trong URL.
 - Save duy nhất theo opportunity, reminder, notification read/delete, profile/settings persist localStorage.
 - Validation form bằng Zod; login điều hướng theo role.
 - Loading, empty, error, disabled, not found và no-permission state.
 - Responsive từ 360px, keyboard focus và semantic label cơ bản.
 
-## Chức năng chưa hoàn thành
+## Chức năng quản trị đã hoàn thành trong frontend mock
 
-- Quy trình tạo/quản lý bài Partner.
-- Review queue, quyết định kiểm duyệt và xử lý báo cáo.
-- Quản trị user/category/audit log và dashboard thật.
-- Email thật, push notification, analytics, export CSV/XLSX và kiểm tra link định kỳ.
+- Partner: dashboard, bài đăng, tạo/sửa/xem trước, lưu nháp, gửi duyệt, gửi lại sau chỉnh sửa, yêu cầu đóng và hồ sơ tổ chức.
+- Moderator: review queue, chi tiết kiểm duyệt, cảnh báo trùng, phê duyệt, yêu cầu chỉnh sửa, từ chối, xử lý report và lịch sử.
+- Admin: dashboard, user/role/status, category, audit log, cấu hình vòng đời, báo cáo và export CSV.
+- Toàn bộ thao tác demo lưu trong `localStorage` và có thể test độc lập không cần backend.
+
+## Giới hạn còn lại
+
+- Chưa có backend/database, email và push notification thật.
+- Analytics dùng dữ liệu mock; chưa có job kiểm tra link định kỳ hoặc export XLSX phía server.
 
 ## Quy tắc nghiệp vụ chính
 
@@ -109,10 +118,10 @@ Giữ interface service hiện tại và thay mock implementation bằng HTTP cl
 
 ## Hướng phát triển tiếp theo
 
-1. Partner: organization verification, post draft/preview/submit/revision.
-2. Moderator: queue, decision reason, duplicate candidate và report handling.
-3. Admin: users/roles/categories/audit/dashboard.
-4. Backend/API, test tự động, observability và hardening bảo mật.
+1. Kết nối backend/API và session bảo mật cho các workflow đã hoàn thiện ở frontend.
+2. Bổ sung test tự động, observability, email/push và job kiểm tra liên kết.
+3. Thay analytics mock bằng dữ liệu thật và bổ sung export XLSX phía server.
+4. Hardening RBAC, audit bất biến và rate limiting.
 
 ## Mở bằng Visual Studio Code
 

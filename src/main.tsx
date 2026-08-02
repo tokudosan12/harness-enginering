@@ -11,6 +11,7 @@ import '@/styles/detail.css';
 import '@/styles/auth.css';
 import '@/styles/student.css';
 import '@/styles/student-forms.css';
+import '@/styles/workspace.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

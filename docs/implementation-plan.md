@@ -14,14 +14,15 @@ React 19, TypeScript strict, Vite, Tailwind CSS 4, React Router DOM, TanStack Qu
 2. UI-02: homepage, danh sách, search/filter/sort, chi tiết và external-link warning.
 3. UI-03: login, register, forgot password, verify email, ProtectedRoute và RoleGuard.
 4. UI-04: StudentLayout, dashboard, saved opportunities, notifications, profile và settings.
-5. UI-05: placeholder có chủ đích cho Partner, Moderator và Admin; QA responsive/a11y.
+5. UI-05: workspace hoàn chỉnh cho Partner, Moderator và Admin; QA responsive/a11y.
 
 ## Trang theo ưu tiên
 
 - P0: `/`, `/opportunities`, `/opportunities/:opportunityId`, `/login`, `/register`.
 - P1: `/forgot-password`, `/verify-email`, `/student/dashboard`, `/student/saved-opportunities`.
 - P2: `/student/notifications`, `/student/profile`, `/student/settings`, `/about`.
-- Future: toàn bộ route Partner, Moderator, Admin và trang audit/report chuyên sâu.
+- Đã triển khai frontend mock: toàn bộ route Partner, Moderator, Admin, audit và report.
+- Future backend: API thật, job định kỳ, email/push, analytics server-side và export XLSX.
 
 ## Component dùng chung
 
